@@ -28,6 +28,6 @@ const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp);
 
 // Initialize firestore
-// const firestore = getFirestore(firebaseApp);
+const firestore = getFirestore(firebaseApp);
 
-export {firebaseApp, firebaseAuth};
+export {firebaseApp, firebaseAuth, firestore};

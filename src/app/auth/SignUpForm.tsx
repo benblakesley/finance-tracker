@@ -2,14 +2,16 @@
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthForm, FormData } from "./AuthForm"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { firebaseAuth } from "../../../firebase";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/state/hooks";
 
 export const SignUpForm = () => 
 {
     const [error, setError] = useState<string>("");
     const router = useRouter();
+    const {id} = useAppSelector(state => state.user);
 
     const primaryText = "Sign Up";
     const secondaryButtonText = "Sign In";
@@ -27,6 +29,8 @@ export const SignUpForm = () =>
             {
                 await createUserWithEmailAndPassword(firebaseAuth, email, password);
         
+                router.push("/");
+
                 setError('');
             }
             catch (error)
@@ -36,6 +40,13 @@ export const SignUpForm = () =>
             }
         }
     };
+
+    useEffect(() => {
+        if (id)
+        {
+            router.push("/");
+        }
+    }, [id]);
     
     return (
         <AuthForm 
