@@ -5,7 +5,11 @@ import { SignInForm } from "../auth/SignInForm"
 export default function SignInPage()
 {
     return (
-        <Container>
+        <Container sx={{
+            display: "flex",
+            height: "100vh",
+            alignItems: "center"
+        }}>
             <SignInForm/>
         </Container>
     )
