@@ -27,6 +27,15 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
 
     const {id} = useAppSelector(state => state.user);
 
+    const resetAll = () =>
+    {
+        setStartDate(null);
+        setEndDate(null);
+        setLabel("");
+        setError("");
+        setAmount(undefined);
+    }
+
     const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => 
     {
         const value = event.target.value;
@@ -70,8 +79,7 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
             // Add a document to the subcollection
             addDoc(subcollectionRef, expense)
 
-            handleClose();
-            setError("");
+            onClose();
         }
         else
         {
@@ -79,8 +87,14 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
         }
     }
 
+    const onClose = () =>
+    {
+        resetAll();
+        handleClose();
+    };
+    
     return (
-        <Modal open={open} onClose={handleClose} aria-labelledby="modal-title">
+        <Modal open={open} onClose={onClose} aria-labelledby="modal-title">
             <Fade in={open}>
             <Box
                 sx={{
