@@ -30,12 +30,11 @@ export const FinancesLineChart = ({timeline}: FinancesLineChartProps) =>
     return (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={slicedData()} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-            {/* <CartesianGrid strokeDasharray="3 3" /> */}
             <XAxis dataKey="date" />
             <YAxis/>
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="expenses" stroke="#8884d8" strokeWidth={3} dot={{ r: 6 }} />
+            <Line type="monotone" dataKey="expenses" stroke="red" strokeWidth={3} dot={{ r: 6 }} />
           </LineChart>
         </ResponsiveContainer>
       );
