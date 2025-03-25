@@ -3,7 +3,6 @@
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { firestore } from "../../../firebase";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
-import { Unsubscribe } from "firebase/auth";
 import { ExpenseData, ExpenseDataAndId, setExpenses } from "@/state/reducers/expensesSlice";
 import { ReactNode, useEffect } from "react";
 

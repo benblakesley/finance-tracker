@@ -3,7 +3,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { firebaseAuth, firestore } from "../../../firebase";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useAppDispatch } from "@/state/hooks";
 import {setUserId} from "@/state/reducers/userSlice";
 
