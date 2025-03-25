@@ -14,7 +14,8 @@ interface ExpensesListProps
 export const ExpensesList = ({expenses}: ExpensesListProps) =>
 {
     const {id} = useAppSelector(state => state.user);
-    const [visibleCount, setVisibleCount] = useState<number>(3);
+    const initialVisibleCount = 3;
+    const [visibleCount, setVisibleCount] = useState<number>(initialVisibleCount);
 
     const handleShowMore = () => {
         setVisibleCount((prev) => (prev + 5 > expenses.length ? expenses.length : prev + 5));
@@ -55,9 +56,9 @@ export const ExpensesList = ({expenses}: ExpensesListProps) =>
              {visibleCount < expenses.length ? <Button onClick={handleShowMore} fullWidth>
                 Show More
             </Button>
-            : <Button onClick={handleHide} fullWidth>
+            : (expenses.length > initialVisibleCount ? <Button onClick={handleHide} fullWidth>
                 Hide
-            </Button>
+            </Button> : undefined)
             }
         </Box>
     )
