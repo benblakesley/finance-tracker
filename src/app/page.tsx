@@ -14,9 +14,8 @@ import { Timelines, TimelineTabs } from "./displays/TimelineTabs";
 export default function Home() 
 {
     const [addExpenseModalOpen, setAddExpenseModalOpen] = useState<boolean>(false);
-
     const {id} = useAppSelector(state => state.user);
-    const {expenses} = useAppSelector(state => state.expenses);
+    const {expenses, monthlyExpensesTotals} = useAppSelector(state => state.expenses);
     const [timeline, setTimeline] = useState<Timelines>(Timelines.SixMonths);
 
     const router = useRouter();
@@ -35,8 +34,14 @@ export default function Home()
           <Box>
             <TopBar/>
             <AddExpenseModal open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
-            <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
-            <FinancesLineChart timeline={timeline}/>
+            { monthlyExpensesTotals.length > 0 && 
+            <>
+              
+              <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
+              <FinancesLineChart timeline={timeline}/>
+            </>
+            }
+            
             <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
               <Button onClick={() => setAddExpenseModalOpen(true)}>
                 Add Expense
