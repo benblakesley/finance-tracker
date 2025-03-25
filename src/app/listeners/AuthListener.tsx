@@ -13,7 +13,7 @@ export const AuthListener = ({children}: {children: ReactNode}) =>
     
     useEffect(() => 
         {
-          const unsubscibe = onAuthStateChanged(firebaseAuth, async (user) => {
+            const unsubscibe = onAuthStateChanged(firebaseAuth, async (user) => {
     
             if(user)
             {

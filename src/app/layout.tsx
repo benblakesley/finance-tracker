@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthListener } from "./auth/AuthListener";
+import { AuthListener } from "./listeners/AuthListener";
 import { ClientProvider } from "@/state/ClientProvider";
+import { ExpensesListener } from "./listeners/ExpensesListener";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ClientProvider>
           <AuthListener>
-            {children}
+            <ExpensesListener>
+              {children}
+            </ExpensesListener>
           </AuthListener>
         </ClientProvider>
       </body>
