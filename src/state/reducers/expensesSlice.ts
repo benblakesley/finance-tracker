@@ -17,11 +17,13 @@ export interface ExpenseDataAndId extends ExpenseData
 interface ExpensesState
 {
     expenses: ExpenseDataAndId[];
+    monthlyExpensesTotals: {date: YearMonthFormat, expenses: number}[];
 }
 
 const initialState: ExpensesState =
 {
-    expenses: []
+    expenses: [],
+    monthlyExpensesTotals: []
 }
 
 const expensesSlice = createSlice({
@@ -31,10 +33,14 @@ const expensesSlice = createSlice({
         setExpenses: (state: ExpensesState, action: PayloadAction<ExpenseDataAndId[]>) =>
         {
             state.expenses = action.payload;
+        },
+        setMonthlyExpensesTotals: (state: ExpensesState, action: PayloadAction<{date: YearMonthFormat, expenses: number}[]>) =>
+        {
+            state.monthlyExpensesTotals = action.payload
         }
     }
 })
 
-export const {setExpenses} = expensesSlice.actions;
+export const {setExpenses, setMonthlyExpensesTotals} = expensesSlice.actions;
 
 export const expensesReducer =  expensesSlice.reducer;

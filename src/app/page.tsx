@@ -9,6 +9,7 @@ import { TopBar } from "./top-bar/TopBar";
 import { FinancesLineChart } from "./displays/FinancesLineChart";
 import { AddExpenseModal } from "./add-expense/AddExpenseModal";
 import { ExpensesList } from "./displays/ExpensesList";
+import { Timelines, TimelineTabs } from "./displays/TimelineTabs";
 
 export default function Home() 
 {
@@ -16,7 +17,8 @@ export default function Home()
 
     const {id} = useAppSelector(state => state.user);
     const {expenses} = useAppSelector(state => state.expenses);
-    
+    const [timeline, setTimeline] = useState<Timelines>(Timelines.SixMonths);
+
     const router = useRouter();
 
     useEffect(() =>
@@ -33,7 +35,8 @@ export default function Home()
           <Box>
             <TopBar/>
             <AddExpenseModal open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
-            <FinancesLineChart/>
+            <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
+            <FinancesLineChart timeline={timeline}/>
             <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
               <Button onClick={() => setAddExpenseModalOpen(true)}>
                 Add Expense

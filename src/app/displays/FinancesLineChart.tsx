@@ -1,35 +1,41 @@
 'use client';
 
+import { useAppSelector } from "@/state/hooks";
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Timelines } from "./TimelineTabs";
 
-const data = [
-  { name: "Jan", sales: 400, revenue: 2400 },
-  { name: "Feb", sales: 800, revenue: 3000 },
-  { name: "Mar", sales: 600, revenue: 2800 },
-  { name: "Apr", sales: 1000, revenue: 3500 },
-  { name: "May", sales: 1200, revenue: 4200 },
-  { name: "Jun", sales: 900, revenue: 3900 },
-  { name: "Jul", sales: 900, revenue: 3900 },
-  { name: "Aug", sales: 900, revenue: 3900 },
-  { name: "Sep", sales: 900, revenue: 3900 },
-  { name: "Oct", sales: 900, revenue: 3900 },
-
-];
-
-
-export const FinancesLineChart = () =>
+interface FinancesLineChartProps
 {
+    timeline: Timelines
+};
+
+export const FinancesLineChart = ({timeline}: FinancesLineChartProps) =>
+{
+    const {monthlyExpensesTotals} = useAppSelector(state => state.expenses);
+
+    const slicedData = () => {
+      switch (timeline) {
+        case Timelines.ThreeMonths:
+          return monthlyExpensesTotals.slice(0,3);
+        case Timelines.SixMonths:
+          return monthlyExpensesTotals.slice(0,6);
+        case Timelines.OneYear:
+            return monthlyExpensesTotals.slice(0,12);
+        case Timelines.FiveYears:
+          return monthlyExpensesTotals.slice(0,60);
+      }
+    };
+
     return (
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+          <LineChart data={slicedData()} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
+            {/* <CartesianGrid strokeDasharray="3 3" /> */}
+            <XAxis dataKey="date" />
+            <YAxis/>
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="sales" stroke="#8884d8" strokeWidth={3} dot={{ r: 6 }} />
-            <Line type="monotone" dataKey="revenue" stroke="#82ca9d" strokeWidth={3} dot={{ r: 6 }} />
+            <Line type="monotone" dataKey="expenses" stroke="#8884d8" strokeWidth={3} dot={{ r: 6 }} />
           </LineChart>
         </ResponsiveContainer>
       );

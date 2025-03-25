@@ -52,7 +52,7 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
 
     const onAddExpense = () =>
     {
-        if (startDate && amount && label.length > 0)
+        if (startDate && amount && label.length > 0 && ((hasEndDate && endDate) || !hasEndDate))
         {
             const expense: ExpenseData = {
                 startDate: startDate,
