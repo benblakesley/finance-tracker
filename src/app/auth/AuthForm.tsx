@@ -126,7 +126,6 @@ export const AuthForm = ({primaryText, secondaryText, onSubmit, error, secondary
               </Typography>
 
               <Button
-                variant="contained"
                 color="primary"
                 fullWidth
                 sx={{ mt: 2 }}
