@@ -7,15 +7,17 @@ import { useRouter } from "next/navigation";
 import { LoadingPage } from "./loading/LoadingPage";
 import { TopBar } from "./top-bar/TopBar";
 import { FinancesLineChart } from "./displays/FinancesLineChart";
-import { AddExpenseModal } from "./add-expense/AddExpenseModal";
-import { ExpensesList } from "./displays/ExpensesList";
+import { AddTransactionModal } from "./add-transaction/AddTransactionModal";
+import { TransactionsList } from "./displays/TransactionsList";
 import { Timelines, TimelineTabs } from "./displays/TimelineTabs";
+import { TransactionTypes } from "@/state/reducers/transactionsSlice";
 
 export default function Home() 
 {
     const [addExpenseModalOpen, setAddExpenseModalOpen] = useState<boolean>(false);
+    const [addIncomeModalOpen, setAddIncomeModalOpen] = useState<boolean>(false);
     const {id} = useAppSelector(state => state.user);
-    const {expenses, monthlyExpensesTotals} = useAppSelector(state => state.expenses);
+    const {expenses, monthlyExpensesTotals, incomes, monthlyIncomesTotals} = useAppSelector(state => state.transactions);
     const [timeline, setTimeline] = useState<Timelines>(Timelines.SixMonths);
 
     const router = useRouter();
@@ -33,10 +35,10 @@ export default function Home()
           {id ?
           <Box>
             <TopBar/>
-            <AddExpenseModal open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
-            { monthlyExpensesTotals.length > 0 && 
-            <>
-              
+            <AddTransactionModal transactionType={TransactionTypes.Expense} open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
+            <AddTransactionModal transactionType={TransactionTypes.Income} open={addIncomeModalOpen} handleClose={() => {setAddIncomeModalOpen(false)}}/>
+            { (monthlyExpensesTotals.length > 0 || monthlyIncomesTotals.length > 0) && 
+            <>   
               <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
               <FinancesLineChart timeline={timeline}/>
             </>
@@ -46,11 +48,12 @@ export default function Home()
               <Button onClick={() => setAddExpenseModalOpen(true)}>
                 Add Expense
               </Button>
-              <Button>
+              <Button onClick={() => setAddIncomeModalOpen(true)}>
                 Add Income
               </Button>
             </Box>
-            <ExpensesList expenses={expenses}/>
+            <TransactionsList transactions={expenses} type={TransactionTypes.Expense}/>
+            <TransactionsList transactions={incomes} type={TransactionTypes.Income}/>
           </Box> :
           <Box>
             <LoadingPage/>

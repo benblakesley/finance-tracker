@@ -1,11 +1,11 @@
 import { userReducer } from '@/state/reducers/userSlice';
 import { configureStore } from '@reduxjs/toolkit';
-import { expensesReducer } from './reducers/expensesSlice';
+import { transactionsReducer } from './reducers/transactionsSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    expenses: expensesReducer
+    transactions: transactionsReducer
   },
 });
 

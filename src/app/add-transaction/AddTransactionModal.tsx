@@ -6,17 +6,18 @@ import { useState } from "react";
 import { firestore } from "../../../firebase";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { useAppSelector } from "@/state/hooks";
-import { ExpenseData } from "@/state/reducers/expensesSlice";
+import { TransactionData, TransactionTypes } from "@/state/reducers/transactionsSlice";
 
-interface AddExpenseModalProps
+interface AddTransactionModalProps
 {
     open: boolean;
     handleClose: () => void;
+    transactionType: TransactionTypes;
 }
 
 export type YearMonthFormat = `${number}-${number}`
 
-export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
+export const AddTransactionModal = ({open, handleClose, transactionType}: AddTransactionModalProps) =>
 {
     const [amount, setAmount] = useState<number | undefined>(undefined);
     const [startDate, setStartDate] = useState<YearMonthFormat| null>(null);
@@ -59,26 +60,32 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
         setEndDate(date);
     };
 
-    const onAddExpense = () =>
+    const onAddTransaction = () =>
     {
         if (startDate && amount && label.length > 0 && ((hasEndDate && endDate) || !hasEndDate))
         {
-            const expense: ExpenseData = {
+            const transaction: TransactionData = {
                 startDate: startDate,
                 endDate: endDate,
                 amount: amount,
-                label: label
+                label: label,
+                type: transactionType
             }
 
             // Get a reference to the user document
             const userRef = doc(firestore, "users", id!);
 
-            // Create a reference to the subcollection
-            const subcollectionRef = collection(userRef, 'expenses');
  
             // Add a document to the subcollection
-            addDoc(subcollectionRef, expense)
-
+            switch (transactionType) {
+                case (TransactionTypes.Expense):
+                    const expensesCollectionRef = collection(userRef, 'expenses');
+                    addDoc(expensesCollectionRef, transaction);
+                    break
+                case (TransactionTypes.Income):
+                    const incomesCollectionRef = collection(userRef, 'incomes');
+                    addDoc(incomesCollectionRef, transaction);
+            }
             onClose();
         }
         else
@@ -112,20 +119,20 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
                 }}
             >
                 <Typography variant="h4" textAlign="center">
-                    Add Expense
+                    Add {transactionType}
                 </Typography>
                 <ClientDatePicker label="Start Date" handleDateChange={handleStartDateChange}/>
                 {hasEndDate && <ClientDatePicker label="End Date" handleDateChange={handleEndDateChange}/>}
                 <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
                     <Typography>
-                        Does this expense have an end date?
+                        End date?
                     </Typography>
                     <Switch checked={hasEndDate} onChange={() => setHasEndDate(!hasEndDate)}/>
                 </Box>
                 
                 <TextField
                     fullWidth
-                    label="Expense Amount"
+                    label={`${transactionType} Amount`}
                     variant="outlined"
                     value={amount}
                     onChange={handleAmountChange}
@@ -138,14 +145,14 @@ export const AddExpenseModal = ({open, handleClose}: AddExpenseModalProps) =>
                 />
                 <TextField
                     fullWidth
-                    label="Expense Label"
+                    label={`${transactionType} Label`}
                     variant="outlined"
                     value={label}
                     onChange={handleLabelChange}
                     sx={{ mt: 2 }}
                 />
                 {error && <Typography color="error" variant="body2">{error}</Typography>}
-                <Button onClick={onAddExpense} sx={{ mt: 2, justifySelf: "center"}} variant="contained">
+                <Button onClick={onAddTransaction} sx={{ mt: 2, justifySelf: "center"}} variant="contained">
                     Add
                 </Button>
         </Box>
