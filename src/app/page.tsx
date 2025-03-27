@@ -52,8 +52,14 @@ export default function Home()
                 Add Income
               </Button>
             </Box>
-            <TransactionsList transactions={expenses} type={TransactionTypes.Expense}/>
-            <TransactionsList transactions={incomes} type={TransactionTypes.Income}/>
+            <Box sx={{display: "flex", flexDirection: { xs: "column", sm: "row" }}}>
+              <Box sx={{ flex: 1 }}>
+                <TransactionsList transactions={expenses} type={TransactionTypes.Expense}/>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TransactionsList transactions={incomes} type={TransactionTypes.Income}/>
+              </Box>
+            </Box>
           </Box> :
           <Box>
             <LoadingPage/>
