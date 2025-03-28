@@ -5,6 +5,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { deleteDoc, doc } from "firebase/firestore";
 import { firestore } from "../../../firebase";
 import { useAppSelector } from "@/state/hooks";
+import EditIcon from "@mui/icons-material/Edit";
 
 interface TransactionsListProps
 {
@@ -55,6 +56,9 @@ export const TransactionsList = ({transactions, type}: TransactionsListProps) =>
                         <Typography>{transaction.label}</Typography>
                         <Box display="flex" alignItems="center" gap={1}>
                             <Typography>£{transaction.amount}</Typography>
+                            <IconButton>
+                                <EditIcon sx={{ color: "white" }} />
+                            </IconButton>
                             <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
                                 <CancelIcon sx={{ color: "red" }} />
                             </IconButton>

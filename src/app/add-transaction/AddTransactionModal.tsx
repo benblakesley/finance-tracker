@@ -1,12 +1,14 @@
 'use client';
 
-import { Box, Button, Fade, Modal, Switch, TextField, Typography } from "@mui/material"
+import { Box, Button, Fade, FormControl, InputLabel, MenuItem, Modal, TextField, Typography } from "@mui/material"
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { ClientDatePicker } from "../displays/ClientDatePicker";
 import { useState } from "react";
 import { firestore } from "../../../firebase";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { useAppSelector } from "@/state/hooks";
 import { TransactionData, TransactionTypes } from "@/state/reducers/transactionsSlice";
+import { addMonthsToDate } from "../helpers/addMonthsToDate";
 
 interface AddTransactionModalProps
 {
@@ -24,7 +26,7 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
     const [endDate, setEndDate] = useState<YearMonthFormat | null>(null);
     const [label, setLabel] = useState<string>("");
     const [error, setError] = useState<string>("");
-    const [hasEndDate, setHasEndDate] = useState<boolean>(true);
+    const [numberOfMonths, setNumberOfMonths] = useState<number>(1);
 
     const {id} = useAppSelector(state => state.user);
 
@@ -55,14 +57,24 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
         setStartDate(date);
     };
 
-    const handleEndDateChange = (date: YearMonthFormat | null) =>
+    const handleEndDateChange = (event: SelectChangeEvent) => 
     {
-        setEndDate(date);
-    };
+        const numberOfMonths = Number(event.target.value);
 
+        setNumberOfMonths(numberOfMonths);
+
+        const finalDate = addMonthsToDate(startDate!, numberOfMonths);
+
+        setEndDate(finalDate);
+
+        console.log(numberOfMonths);
+
+        console.log(finalDate);
+    };
+    
     const onAddTransaction = () =>
     {
-        if (startDate && amount && label.length > 0 && ((hasEndDate && endDate) || !hasEndDate))
+        if (startDate && amount && label.length > 0 && endDate)
         {
             const transaction: TransactionData = {
                 startDate: startDate,
@@ -100,6 +112,8 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
         handleClose();
     };
     
+    const numberOfMonthsArray = Array.from({ length: 61 }, (_, index) => index + 1);
+
     return (
         <Modal open={open} onClose={onClose} aria-labelledby="modal-title">
             <Fade in={open}>
@@ -122,14 +136,22 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
                     Add {transactionType}
                 </Typography>
                 <ClientDatePicker label="Start Date" handleDateChange={handleStartDateChange}/>
-                {hasEndDate && <ClientDatePicker label="End Date" handleDateChange={handleEndDateChange}/>}
-                <Box sx={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-                    <Typography>
-                        End date?
-                    </Typography>
-                    <Switch checked={hasEndDate} onChange={() => setHasEndDate(!hasEndDate)}/>
-                </Box>
-                
+
+                {startDate && <Box sx={{mt: 2}}>
+                    <FormControl fullWidth>
+                        <InputLabel>Number of Months</InputLabel>
+                        <Select
+                        value={numberOfMonths.toString()}
+                        label="Number of Months"
+                        onChange={handleEndDateChange}
+                        >
+                        {numberOfMonthsArray.map((number: number) => {
+                            return  <MenuItem key={number} value={number}>{number}</MenuItem>
+                        })}
+                        </Select>
+                    </FormControl>
+                </Box>}
+
                 <TextField
                     fullWidth
                     label={`${transactionType} Amount`}

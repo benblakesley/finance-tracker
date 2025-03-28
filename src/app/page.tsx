@@ -30,6 +30,8 @@ export default function Home()
       }
     }, [id]);
 
+    const transactionsExist = (monthlyExpensesTotals.length > 0 || monthlyIncomesTotals.length > 0);
+
     return (
       <Box>
           {id ?
@@ -37,13 +39,12 @@ export default function Home()
             <TopBar/>
             <AddTransactionModal transactionType={TransactionTypes.Expense} open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
             <AddTransactionModal transactionType={TransactionTypes.Income} open={addIncomeModalOpen} handleClose={() => {setAddIncomeModalOpen(false)}}/>
-            { (monthlyExpensesTotals.length > 0 || monthlyIncomesTotals.length > 0) && 
+            {transactionsExist && 
             <>   
               <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
               <FinancesLineChart timeline={timeline}/>
             </>
             }
-            
             <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
               <Button onClick={() => setAddExpenseModalOpen(true)}>
                 Add Expense
