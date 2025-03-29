@@ -5,9 +5,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { ClientDatePicker } from "../displays/ClientDatePicker";
 import { useState } from "react";
 import { firestore } from "../../../firebase";
-import { addDoc, collection, doc } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { useAppSelector } from "@/state/hooks";
-import { TransactionData, TransactionTypes } from "@/state/reducers/transactionsSlice";
+import { TransactionData, TransactionDataAndId, TransactionTypes } from "@/state/reducers/transactionsSlice";
 import { addMonthsToDate } from "../helpers/addMonthsToDate";
 
 interface AddTransactionModalProps
@@ -15,11 +15,12 @@ interface AddTransactionModalProps
     open: boolean;
     handleClose: () => void;
     transactionType: TransactionTypes;
+    transactionId?: string;
 }
 
 export type YearMonthFormat = `${number}-${number}`
 
-export const AddTransactionModal = ({open, handleClose, transactionType}: AddTransactionModalProps) =>
+export const AddTransactionModal = ({open, handleClose, transactionType, transactionId}: AddTransactionModalProps) =>
 {
     const [amount, setAmount] = useState<number | undefined>(undefined);
     const [startDate, setStartDate] = useState<YearMonthFormat| null>(null);
@@ -66,10 +67,6 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
         const finalDate = addMonthsToDate(startDate!, numberOfMonths);
 
         setEndDate(finalDate);
-
-        console.log(numberOfMonths);
-
-        console.log(finalDate);
     };
     
     const onAddTransaction = () =>
@@ -87,7 +84,6 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
             // Get a reference to the user document
             const userRef = doc(firestore, "users", id!);
 
- 
             // Add a document to the subcollection
             switch (transactionType) {
                 case (TransactionTypes.Expense):
@@ -97,6 +93,44 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
                 case (TransactionTypes.Income):
                     const incomesCollectionRef = collection(userRef, 'incomes');
                     addDoc(incomesCollectionRef, transaction);
+                    break;
+            }
+            onClose();
+        }
+        else
+        {
+            setError("Please fill in all required fields.")
+        }
+    }
+
+    const onEditTransaction = async () => {
+        if (startDate && amount && label.length > 0 && endDate)
+        {
+            const transaction: TransactionData = {
+                startDate: startDate,
+                endDate: endDate,
+                amount: amount,
+                label: label,
+                type: transactionType
+            }
+
+            let docRef;
+            switch (transactionType) {
+                case (TransactionTypes.Expense):
+                    docRef = doc(firestore, "users", id!, "expenses", transactionId!);
+                    break
+                case (TransactionTypes.Income):
+                    docRef = doc(firestore, "users", id!, "incomes", transactionId!);
+                    break;
+            }
+            try 
+            {
+                await updateDoc(docRef, {...transaction});
+                console.log("Document in subcollection updated successfully!");
+            } 
+            catch (error) 
+            {
+              console.error("Error updating document in subcollection: ", error);
             }
             onClose();
         }
@@ -111,7 +145,7 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
         resetAll();
         handleClose();
     };
-    
+
     const numberOfMonthsArray = Array.from({ length: 61 }, (_, index) => index + 1);
 
     return (
@@ -133,7 +167,7 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
                 }}
             >
                 <Typography variant="h4" textAlign="center">
-                    Add {transactionType}
+                    {transactionId ? "Edit" : "Add"} {transactionType}
                 </Typography>
                 <ClientDatePicker label="Start Date" handleDateChange={handleStartDateChange}/>
 
@@ -174,8 +208,8 @@ export const AddTransactionModal = ({open, handleClose, transactionType}: AddTra
                     sx={{ mt: 2 }}
                 />
                 {error && <Typography color="error" variant="body2">{error}</Typography>}
-                <Button onClick={onAddTransaction} sx={{ mt: 2, justifySelf: "center"}} variant="contained">
-                    Add
+                <Button onClick={transactionId ? onEditTransaction : onAddTransaction} sx={{ mt: 2, justifySelf: "center"}} variant="contained">
+                    {transactionId ? "Edit" : "Add"}
                 </Button>
         </Box>
         </Fade>

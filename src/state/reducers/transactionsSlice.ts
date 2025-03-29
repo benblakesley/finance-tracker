@@ -10,7 +10,7 @@ export const enum TransactionTypes
 export interface TransactionData
 {
     startDate: YearMonthFormat;
-    endDate: YearMonthFormat | null;
+    endDate: YearMonthFormat;
     amount: number;
     label: string;
     type: TransactionTypes;

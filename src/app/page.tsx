@@ -2,7 +2,7 @@
 
 import { useAppSelector } from "@/state/hooks";
 import { Box, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingPage } from "./loading/LoadingPage";
 import { TopBar } from "./top-bar/TopBar";
@@ -19,6 +19,7 @@ export default function Home()
     const {id} = useAppSelector(state => state.user);
     const {expenses, monthlyExpensesTotals, incomes, monthlyIncomesTotals} = useAppSelector(state => state.transactions);
     const [timeline, setTimeline] = useState<Timelines>(Timelines.SixMonths);
+    const transactionIdToEdit = useRef("");
 
     const router = useRouter();
 
@@ -32,14 +33,31 @@ export default function Home()
 
     const transactionsExist = (monthlyExpensesTotals.length > 0 || monthlyIncomesTotals.length > 0);
 
+    const onEditTransaction = (transactionId: string, type: TransactionTypes) => 
+    {
+      transactionIdToEdit.current = transactionId;
+      switch(type) {
+        case (TransactionTypes.Expense):
+          setAddExpenseModalOpen(true);
+          break;
+        case (TransactionTypes.Income):
+          setAddIncomeModalOpen(true);
+          break;
+      }
+    }
+
+    useEffect(() => {
+      transactionIdToEdit.current = "";
+    }, [addExpenseModalOpen, addIncomeModalOpen]);
+    
     return (
       <Box>
           {id ?
           <Box>
             <TopBar/>
-            <AddTransactionModal transactionType={TransactionTypes.Expense} open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
-            <AddTransactionModal transactionType={TransactionTypes.Income} open={addIncomeModalOpen} handleClose={() => {setAddIncomeModalOpen(false)}}/>
-            {transactionsExist && 
+            <AddTransactionModal transactionId={transactionIdToEdit.current} transactionType={TransactionTypes.Expense} open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
+            <AddTransactionModal transactionId={transactionIdToEdit.current} transactionType={TransactionTypes.Income} open={addIncomeModalOpen} handleClose={() => {setAddIncomeModalOpen(false)}}/>
+            {transactionsExist &&
             <>   
               <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
               <FinancesLineChart timeline={timeline}/>
@@ -55,10 +73,10 @@ export default function Home()
             </Box>
             <Box sx={{display: "flex", flexDirection: { xs: "column", sm: "row" }}}>
               <Box sx={{ flex: 1 }}>
-                <TransactionsList transactions={expenses} type={TransactionTypes.Expense}/>
+                <TransactionsList transactions={expenses} type={TransactionTypes.Expense} onEditTransaction={onEditTransaction}/>
               </Box>
               <Box sx={{ flex: 1 }}>
-                <TransactionsList transactions={incomes} type={TransactionTypes.Income}/>
+                <TransactionsList transactions={incomes} type={TransactionTypes.Income} onEditTransaction={onEditTransaction}/>
               </Box>
             </Box>
           </Box> :

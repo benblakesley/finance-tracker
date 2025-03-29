@@ -11,9 +11,10 @@ interface TransactionsListProps
 {
     transactions: TransactionDataAndId[];
     type: TransactionTypes;
+    onEditTransaction: (transactionId: string, type: TransactionTypes) => void;
 }
 
-export const TransactionsList = ({transactions, type}: TransactionsListProps) =>
+export const TransactionsList = ({transactions, type, onEditTransaction}: TransactionsListProps) =>
 {
     const {id} = useAppSelector(state => state.user);
     const initialVisibleCount = 3;
@@ -45,6 +46,11 @@ export const TransactionsList = ({transactions, type}: TransactionsListProps) =>
           }
     }
 
+    const handleClickEditButton = (transactionId: string, type: TransactionTypes) =>
+    {
+        onEditTransaction(transactionId, type);
+    }
+
     return (
         <Box>
             <Typography p={1} variant="h6" sx={{fontWeight: 700}}>
@@ -56,11 +62,11 @@ export const TransactionsList = ({transactions, type}: TransactionsListProps) =>
                         <Typography>{transaction.label}</Typography>
                         <Box display="flex" alignItems="center" gap={1}>
                             <Typography>£{transaction.amount}</Typography>
-                            <IconButton>
-                                <EditIcon sx={{ color: "white" }} />
+                            <IconButton onClick={() => handleClickEditButton(transaction.id, transaction.type)}>
+                                <EditIcon sx={{color: "white"}} />
                             </IconButton>
                             <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
-                                <CancelIcon sx={{ color: "red" }} />
+                                <CancelIcon sx={{color: "red"}} />
                             </IconButton>
                         </Box>
                     </Box>
