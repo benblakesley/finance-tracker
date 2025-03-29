@@ -149,7 +149,7 @@ export const AddTransactionModal = ({open, handleClose, transactionType, transac
     const numberOfMonthsArray = Array.from({ length: 61 }, (_, index) => index + 1);
 
     return (
-        <Modal open={open} onClose={onClose} aria-labelledby="modal-title">
+        <Modal open={open} onClose={onClose} aria-labelledby="transaction-info-modal">
             <Fade in={open}>
             <Box
                 sx={{

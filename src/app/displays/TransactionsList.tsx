@@ -1,4 +1,4 @@
-import { TransactionDataAndId, TransactionTypes } from "@/state/reducers/transactionsSlice"
+import { TransactionData, TransactionDataAndId, TransactionTypes } from "@/state/reducers/transactionsSlice"
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -6,15 +6,17 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { firestore } from "../../../firebase";
 import { useAppSelector } from "@/state/hooks";
 import EditIcon from "@mui/icons-material/Edit";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 interface TransactionsListProps
 {
     transactions: TransactionDataAndId[];
     type: TransactionTypes;
     onEditTransaction: (transactionId: string, type: TransactionTypes) => void;
+    onViewTransactionInfo: (transaction: TransactionData) => void;
 }
 
-export const TransactionsList = ({transactions, type, onEditTransaction}: TransactionsListProps) =>
+export const TransactionsList = ({transactions, type, onEditTransaction, onViewTransactionInfo}: TransactionsListProps) =>
 {
     const {id} = useAppSelector(state => state.user);
     const initialVisibleCount = 3;
@@ -67,6 +69,9 @@ export const TransactionsList = ({transactions, type, onEditTransaction}: Transa
                             </IconButton>
                             <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
                                 <CancelIcon sx={{color: "red"}} />
+                            </IconButton>
+                            <IconButton color="info" onClick={() => {onViewTransactionInfo(transaction)}}>
+                                <InfoOutlinedIcon />
                             </IconButton>
                         </Box>
                     </Box>

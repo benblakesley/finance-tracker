@@ -10,7 +10,8 @@ import { FinancesLineChart } from "./displays/FinancesLineChart";
 import { AddTransactionModal } from "./add-transaction/AddTransactionModal";
 import { TransactionsList } from "./displays/TransactionsList";
 import { Timelines, TimelineTabs } from "./displays/TimelineTabs";
-import { TransactionTypes } from "@/state/reducers/transactionsSlice";
+import { TransactionData, TransactionTypes } from "@/state/reducers/transactionsSlice";
+import { TransactionInfoModal } from "./transaction-info/TransactionInfoModal";
 
 export default function Home() 
 {
@@ -20,6 +21,7 @@ export default function Home()
     const {expenses, monthlyExpensesTotals, incomes, monthlyIncomesTotals} = useAppSelector(state => state.transactions);
     const [timeline, setTimeline] = useState<Timelines>(Timelines.SixMonths);
     const transactionIdToEdit = useRef("");
+    const [transactionInfo, setTransactionInfo] = useState<TransactionData | undefined>(undefined);
 
     const router = useRouter();
 
@@ -50,6 +52,11 @@ export default function Home()
       transactionIdToEdit.current = "";
     }, [addExpenseModalOpen, addIncomeModalOpen]);
 
+    const onViewTransactionInfo = (transaction: TransactionData) =>
+    {
+        setTransactionInfo(transaction);
+    }
+
     return (
       <Box>
           {id ?
@@ -57,6 +64,7 @@ export default function Home()
             <TopBar/>
             <AddTransactionModal transactionId={transactionIdToEdit.current} transactionType={TransactionTypes.Expense} open={addExpenseModalOpen} handleClose={() => {setAddExpenseModalOpen(false)}}/>
             <AddTransactionModal transactionId={transactionIdToEdit.current} transactionType={TransactionTypes.Income} open={addIncomeModalOpen} handleClose={() => {setAddIncomeModalOpen(false)}}/>
+            {transactionInfo && <TransactionInfoModal transaction={transactionInfo} open={!!transactionInfo} handleClose={() =>{setTransactionInfo(undefined)}}/>}
             {transactionsExist &&
             <>   
               <TimelineTabs timeline={timeline} setTimeline={setTimeline}/>
@@ -79,10 +87,10 @@ export default function Home()
             {transactionsExist && 
             <Box sx={{display: "flex", flexDirection: { xs: "column", sm: "row" }}}>
               <Box sx={{ flex: 1 }}>
-                <TransactionsList transactions={expenses} type={TransactionTypes.Expense} onEditTransaction={onEditTransaction}/>
+                <TransactionsList transactions={expenses} type={TransactionTypes.Expense} onEditTransaction={onEditTransaction} onViewTransactionInfo={onViewTransactionInfo}/>
               </Box>
               <Box sx={{ flex: 1 }}>
-                <TransactionsList transactions={incomes} type={TransactionTypes.Income} onEditTransaction={onEditTransaction}/>
+                <TransactionsList transactions={incomes} type={TransactionTypes.Income} onEditTransaction={onEditTransaction} onViewTransactionInfo={onViewTransactionInfo}/>
               </Box>
             </Box>
             }
