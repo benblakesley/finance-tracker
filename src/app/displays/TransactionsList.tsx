@@ -63,7 +63,7 @@ export const TransactionsList = ({transactions, type, onEditTransaction, onViewT
                     <Box display="flex" justifyContent="space-between" p={2} key={transaction.id}>
                         <Typography>{transaction.label}</Typography>
                         <Box display="flex" alignItems="center" gap={1}>
-                            <Typography>£{transaction.amount}</Typography>
+                            <Typography>£{transaction.amount.toFixed(2)}</Typography>
                             <IconButton onClick={() => handleClickEditButton(transaction.id, transaction.type)}>
                                 <EditIcon sx={{color: "white"}} />
                             </IconButton>
