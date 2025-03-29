@@ -7,7 +7,7 @@ import { useState } from "react";
 import { firestore } from "../../../firebase";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { useAppSelector } from "@/state/hooks";
-import { TransactionData, TransactionDataAndId, TransactionTypes } from "@/state/reducers/transactionsSlice";
+import { TransactionData, TransactionTypes } from "@/state/reducers/transactionsSlice";
 import { addMonthsToDate } from "../helpers/addMonthsToDate";
 
 interface AddTransactionModalProps
