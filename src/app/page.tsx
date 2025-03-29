@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppSelector } from "@/state/hooks";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingPage } from "./loading/LoadingPage";
@@ -49,7 +49,7 @@ export default function Home()
     useEffect(() => {
       transactionIdToEdit.current = "";
     }, [addExpenseModalOpen, addIncomeModalOpen]);
-    
+
     return (
       <Box>
           {id ?
@@ -63,6 +63,11 @@ export default function Home()
               <FinancesLineChart timeline={timeline}/>
             </>
             }
+            {!transactionsExist && <Box>
+              <Typography sx={{mt: 10, color: "#80EFFF" , fontWeight: 800, textAlign: "center", fontSize: {xs: "2em", sm: "2em"}}}>
+                  To get started, add an Expense or an Income!
+              </Typography>
+            </Box>}
             <Box sx={{display: "flex", flexDirection: "row", justifyContent: "center"}}>
               <Button onClick={() => setAddExpenseModalOpen(true)}>
                 Add Expense
@@ -71,6 +76,7 @@ export default function Home()
                 Add Income
               </Button>
             </Box>
+            {transactionsExist && 
             <Box sx={{display: "flex", flexDirection: { xs: "column", sm: "row" }}}>
               <Box sx={{ flex: 1 }}>
                 <TransactionsList transactions={expenses} type={TransactionTypes.Expense} onEditTransaction={onEditTransaction}/>
@@ -79,6 +85,7 @@ export default function Home()
                 <TransactionsList transactions={incomes} type={TransactionTypes.Income} onEditTransaction={onEditTransaction}/>
               </Box>
             </Box>
+            }
           </Box> :
           <Box>
             <LoadingPage/>
