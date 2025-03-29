@@ -1,5 +1,5 @@
 import { TransactionData } from "@/state/reducers/transactionsSlice"
-import { Modal, Box, Typography, Button, IconButton } from "@mui/material";
+import { Modal, Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface TransactionInfoModalProps
