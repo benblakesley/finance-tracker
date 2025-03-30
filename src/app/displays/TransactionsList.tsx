@@ -60,7 +60,7 @@ export const TransactionsList = ({transactions, type, onEditTransaction, onViewT
             </Typography>
             {transactions.slice(0, visibleCount).map((transaction => {
                 return (
-                    <Box display="flex" justifyContent="space-between" p={2} key={transaction.id}>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" p={2} key={transaction.id}>
                         <Typography>{transaction.label}</Typography>
                         <Box display="flex" alignItems="center" gap={1}>
                             <Typography>£{transaction.amount.toFixed(2)}</Typography>
