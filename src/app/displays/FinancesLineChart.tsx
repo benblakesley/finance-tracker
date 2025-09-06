@@ -17,6 +17,10 @@ export const FinancesLineChart = ({timeline}: FinancesLineChartProps) =>
 
     const mergedData: {date: YearMonthFormat, expenses: number, incomes: number}[] = [];
 
+    // Get the current year and month in YYYY-MM format
+    const today = new Date();
+    const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
     // Helper function to find an entry by date
     const findOrCreateEntry = (date: YearMonthFormat) => {
       let entry = mergedData.find(item => item.date === date);
@@ -39,17 +43,21 @@ export const FinancesLineChart = ({timeline}: FinancesLineChartProps) =>
 
     // Sort by date
     mergedData.sort((a, b) => a.date.localeCompare(b.date));
+    
+    // Filter mergedData to only include current month and future months
+    const futureData = mergedData.filter(item => item.date >= currentMonth);
 
+    // Then slice based on timeline
     const slicedData = () => {
       switch (timeline) {
         case Timelines.ThreeMonths:
-          return mergedData.slice(0,3);
+          return futureData.slice(0, 3);
         case Timelines.SixMonths:
-          return mergedData.slice(0,6);
+          return futureData.slice(0, 6);
         case Timelines.OneYear:
-            return mergedData.slice(0,12);
+          return futureData.slice(0, 12);
         case Timelines.FiveYears:
-          return mergedData.slice(0,60);
+          return futureData.slice(0, 60);
       }
     };
 
